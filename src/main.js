@@ -4,6 +4,8 @@ const RIGHT = 'right';
 const DOWN = 'down';
 const LEFT = 'left';
 
+const MAX_DIFFICULTY = 6;
+
 //general game variables
 var isPaused = false;
 var table = null;
@@ -11,9 +13,11 @@ var pieceOfFood = null;
 var snakeBody = [];
 var intervalClock;
 var currentDirection = RIGHT;
+
+const ZERO = 0;
 var tableRows;
 var tableColumns;
-var difficulty = 4;
+var difficulty = 3;
 
 class SnakeBodyCell {
     constructor(row, column) {
@@ -89,6 +93,7 @@ function updateSnakeGame() {
 
     //update the divs here
     document.getElementById("scoreData").textContent = snakeBody.length;
+    document.getElementById("difficulty").textContent = difficulty.toString();
 }
 
 //update this so that it 
@@ -122,6 +127,7 @@ function checkGame() {
     //if the food was eaten, make a new piece
     if(pieceOfFood == null){
         placeObjectRandomlyOnTable("food-cell");
+        increaseGameSpeed(0.1);
     }
 
     var currHeadRow = snakeBody[0].row;
@@ -136,17 +142,29 @@ function checkGame() {
 
     switch (currentDirection) {
         case LEFT:
-            currHeadColumn = Math.max(0, currHeadColumn - 1);
+            currHeadColumn = currHeadColumn - 1;
             break;
         case UP:
-            currHeadRow = Math.max(0, currHeadRow - 1);
+            currHeadRow = currHeadRow - 1;
             break;
         case RIGHT:
-            currHeadColumn = Math.min(tableColumns - 1, currHeadColumn + 1);
+            currHeadColumn = currHeadColumn + 1;
             break;
         case DOWN:
-            currHeadRow = Math.min(tableRows - 1, currHeadRow + 1);
+            currHeadRow = currHeadRow + 1;
             break;
+    }
+    if(currHeadColumn < ZERO) {
+        currHeadColumn = tableColumns - 1;
+    }
+    else if(currHeadColumn > tableColumns - 1) {
+        currHeadColumn = 0;
+    }
+    else if(currHeadRow < ZERO) {
+        currHeadRow = tableRows - 1;
+    }
+    else if(currHeadRow > tableRows - 1) {
+        currHeadRow = 0;
     }
 
     var bodyPart = new SnakeBodyCell(currHeadRow, currHeadColumn);
@@ -183,4 +201,10 @@ function unpauseGame() {
 function pauseGame() {
     clearInterval(intervalClock);
     isPaused = true;
+}
+
+function increaseGameSpeed(additionalDifficulty) {
+    difficulty = Math.min(difficulty + additionalDifficulty, MAX_DIFFICULTY);
+    clearInterval(intervalClock);
+    intervalClock = setInterval(updateSnakeGame, 250 / difficulty);
 }

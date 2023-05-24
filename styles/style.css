@@ -3,11 +3,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 50vh;
+    height: 60vh;
   }
   
 #snakeGameTable {
     margin-bottom: 10px; /* Adjust the margin as needed */
+    border: 4px solid black;
     background-image: url("https://images.pexels.com/photos/413195/pexels-photo-413195.jpeg");
   }
   
@@ -18,7 +19,7 @@
   }
 
 .snake-table td {
-    padding: 5px;
+    padding: 6px;
   }
 
 .empty-cell {
@@ -48,9 +49,14 @@ body {
     font-size: 1.5em;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: aliceblue;
-    background-color: black;
+    background-color: blueviolet;
 }
 
 #scoreData {
     margin-left: 5px; /* Add a small left margin for spacing */
+}
+
+h1 {
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
 }
