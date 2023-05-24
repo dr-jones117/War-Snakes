@@ -9,12 +9,15 @@
 
     <body>
         <div id="everything">
+            <h1>Slither Surf</h1>
             <div id="snakeGameTable"></div>
             <div id="bottomLayer">
                 <input id="startGameButton" type="button" value="Start Game" onclick="initializeSnakeGame(25, 70)">
                 <div id="score">
                     <div>Snake Length: </div>
                     <div id="scoreData">0</div>
+                    <div style="margin-left: 20px;">Difficulty: </div>
+                    <div id="difficulty" style="margin-left: 5px;">0</div>
                 </div>
                 <input id="pauseGame" type="button" value="Pause Game" onclick="pauseGameToggle()">
             </div>
