@@ -5,6 +5,7 @@ const DOWN = 'down';
 const LEFT = 'left';
 
 //general game variables
+var isPaused = false;
 var table = null;
 var pieceOfFood = null;
 var snakeBody = [];
@@ -18,6 +19,13 @@ class SnakeBodyCell {
     constructor(row, column) {
       this.row = row;
       this.column = column;
+    }
+}
+
+class Snake {
+    constructor(id) {
+        this.id = id;
+        this.body = [];
     }
 }
 
@@ -69,8 +77,7 @@ function initializeSnakeGame(rows, columns) {
     var bodyPart = new SnakeBodyCell(randomRow, randomColumn);
     snakeBody.push(bodyPart);
 
-    //update the game every fourth of a second divided by the difficulty
-    intervalClock = setInterval(updateSnakeGame, 250 / difficulty);
+    unpauseGame();
 
     PlaySnakeGame();
 }
@@ -160,4 +167,20 @@ function checkGameWin() {
         return true;
     } 
     return false;
+}
+
+function pauseGameToggle() {
+    if(isPaused) unpauseGame();
+    else pauseGame();
+}
+
+function unpauseGame() {
+    //update the game every fourth of a second divided by the difficulty
+    intervalClock = setInterval(updateSnakeGame, 250 / difficulty);
+    isPaused = false;
+}
+
+function pauseGame() {
+    clearInterval(intervalClock);
+    isPaused = true;
 }
