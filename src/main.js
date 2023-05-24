@@ -13,7 +13,7 @@ var intervalClock;
 var currentDirection = RIGHT;
 var tableRows;
 var tableColumns;
-var difficulty = 2;
+var difficulty = 4;
 
 class SnakeBodyCell {
     constructor(row, column) {
