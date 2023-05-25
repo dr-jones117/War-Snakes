@@ -21,6 +21,10 @@ var difficulty = 3;
 //event listeners
 document.addEventListener('keydown', changePlayerOneDirection);
 function changePlayerOneDirection(event) {
+    // Check if the pressed key is an arrow key
+    if (event.key.startsWith('Arrow')) {
+        event.preventDefault(); // Prevent default scrolling behavior
+    } 
     if(playerOneSnake.directionSetForFrame) return;
     if (event.key === 'ArrowLeft' && playerOneSnake.direction != Snake.RIGHT)
         playerOneSnake.direction = Snake.LEFT;
@@ -36,6 +40,10 @@ function changePlayerOneDirection(event) {
 //event listeners
 document.addEventListener('keydown', changePlayerTwoDirection);
 function changePlayerTwoDirection(event) {
+    // Check if the pressed key is an arrow key
+    if (event.key.startsWith('Arrow')) {
+        event.preventDefault(); // Prevent default scrolling behavior
+    } 
     if(playerTwoSnake.directionSetForFrame) return;
     if (event.key === 'a' && playerTwoSnake.direction != Snake.RIGHT)
         playerTwoSnake.direction = Snake.LEFT;
@@ -290,7 +298,7 @@ function getCellClassList(row, column) {
 }
 
 document.getElementById("startGameButton").addEventListener("click", function() {
-    initializeSnakeGame(20, 50);
+    initializeSnakeGame(40, 60);
 });
 
 document.getElementById("pauseGameButton").addEventListener("click", function() {
