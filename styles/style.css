@@ -33,6 +33,12 @@
     background-color: #ff1cdd;
   }
 
+.snake-cell-two {
+    width: 1px;
+    height: 1px;
+    background-color: #1916e9;
+  }
+
 .food-cell {
     width: 1px;
     height: 1px;
