@@ -148,19 +148,18 @@ function changeCellClass(row, column, newClass) {
 }
 
 function checkGame() {
-    //if the food was eaten, make a new piece
-    if(pieceOfFood == null){
-        pieceOfFood = new Food();
-        placeObjectRandomlyOnTable(pieceOfFood);
-        increaseGameSpeed(0.1);
-    }
-
     for(var i = 0; i < snakes.length; i++) {
-        updateIndividualSnakeCells(snakes[i], 'empty-cell');
+        
         var currHeadRow = snakes[i].body[0].row;
         var currHeadColumn = snakes[i].body[0].column;
 
         var cutTail = true;
+        //if the food was eaten, make a new piece
+        if(pieceOfFood == null){
+            pieceOfFood = new Food();
+            placeObjectRandomlyOnTable(pieceOfFood);
+            increaseGameSpeed(0.1);
+        }
         if(currHeadRow == pieceOfFood.row && currHeadColumn == pieceOfFood.column){
             pieceOfFood = null;
             cutTail =  false;
@@ -193,6 +192,19 @@ function checkGame() {
             currHeadRow = 0;
         }
 
+        var classList = getCellClassList(currHeadRow, currHeadColumn);
+        if(snakes[i].id == 1) {
+            console.log(classList);
+        }
+        
+        if(!getCellClassList(currHeadRow, currHeadColumn).contains("empty-cell") &&
+           !getCellClassList(currHeadRow, currHeadColumn).contains("food-cell")) {
+            snakes[i].isAlive = false;
+            continue;
+        }
+
+        updateIndividualSnakeCells(snakes[i], 'empty-cell');
+        
         var bodyPart = new SnakeBodyCell(currHeadRow, currHeadColumn);
         snakes[i].body.unshift(bodyPart);
 
@@ -200,6 +212,20 @@ function checkGame() {
             snakes[i].body.pop();
 
         updateIndividualSnakeCells(snakes[i]);
+    }
+    removeDeadSnakes();
+}
+
+function removeDeadSnakes() {
+    for(var i = 0; i < snakes.length; i++) {
+        if(snakes[i].isAlive) continue;
+        updateIndividualSnakeCells(snakes[i], 'empty-cell');
+        
+        var index = snakes.indexOf(snakes[i]);
+        if (index !== -1) {
+            snakes.splice(index, 1); // Remove one element at the found index
+        }
+        
     }
     
 }
@@ -250,9 +276,18 @@ function isEmptyCell(row, column) {
     return false;
 }
 
+function getCellClassList(row, column) {
+    var rows = table.getElementsByTagName("tr");
+    if (row < rows.length) {
+      var cells = rows[row].getElementsByTagName("td");
+      if (column < cells.length) {
+        return cells[column].classList;
+      }
+    }
+}
+
 document.getElementById("startGameButton").addEventListener("click", function() {
-    console.log("hello 2");
-    initializeSnakeGame(20, 20);
+    initializeSnakeGame(10, 10);
 });
 
 document.getElementById("pauseGameButton").addEventListener("click", function() {

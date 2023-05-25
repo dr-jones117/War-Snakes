@@ -16,6 +16,7 @@ class Snake {
         this.body = [];
         this.classStyleName = classStyleName;
         this.direction = Snake.RIGHT;
+        this.isAlive = true;
     }
 }
 
