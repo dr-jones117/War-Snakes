@@ -17,6 +17,7 @@ class Snake {
         this.classStyleName = classStyleName;
         this.direction = Snake.RIGHT;
         this.isAlive = true;
+        this.directionSetForFrame;
     }
 }
 
