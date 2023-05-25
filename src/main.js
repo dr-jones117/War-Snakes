@@ -21,6 +21,7 @@ var difficulty = 3;
 //event listeners
 document.addEventListener('keydown', changePlayerOneDirection);
 function changePlayerOneDirection(event) {
+    if(playerOneSnake.directionSetForFrame) return;
     if (event.key === 'ArrowLeft' && playerOneSnake.direction != Snake.RIGHT)
         playerOneSnake.direction = Snake.LEFT;
     else if (event.key === 'ArrowUp' && playerOneSnake.direction != Snake.DOWN)
@@ -29,11 +30,13 @@ function changePlayerOneDirection(event) {
         playerOneSnake.direction = Snake.RIGHT;
     else if (event.key === 'ArrowDown' && playerOneSnake.direction != Snake.UP)
         playerOneSnake.direction = Snake.DOWN;
+    playerOneSnake.directionSetForFrame = true;
 }
 
 //event listeners
 document.addEventListener('keydown', changePlayerTwoDirection);
 function changePlayerTwoDirection(event) {
+    if(playerTwoSnake.directionSetForFrame) return;
     if (event.key === 'a' && playerTwoSnake.direction != Snake.RIGHT)
         playerTwoSnake.direction = Snake.LEFT;
     else if (event.key === 'w' && playerTwoSnake.direction != Snake.DOWN)
@@ -42,6 +45,7 @@ function changePlayerTwoDirection(event) {
         playerTwoSnake.direction = Snake.RIGHT;
     else if (event.key === 's' && playerTwoSnake.direction != Snake.UP)
         playerTwoSnake.direction = Snake.DOWN;
+    directionSetForFrame = true;
 }
 
 function initializeSnakeGame(rows, columns) {
@@ -106,8 +110,8 @@ function updateSnakeGame() {
     //updateSnakeCells("snake-cell");
 
     //update the divs here
-    document.getElementById("scoreData").textContent = snakeBody.length;
-    document.getElementById("difficulty").textContent = difficulty.toString();
+    //document.getElementById("scoreData").textContent = snakeBody.length;
+    //document.getElementById("difficulty").textContent = difficulty.toString();
 }
 
 //update this so that it 
@@ -149,10 +153,9 @@ function changeCellClass(row, column, newClass) {
 
 function checkGame() {
     for(var i = 0; i < snakes.length; i++) {
-        
+        snakes[i].directionSetForFrame = false;
         var currHeadRow = snakes[i].body[0].row;
         var currHeadColumn = snakes[i].body[0].column;
-
         var cutTail = true;
         //if the food was eaten, make a new piece
         if(pieceOfFood == null){
@@ -287,7 +290,7 @@ function getCellClassList(row, column) {
 }
 
 document.getElementById("startGameButton").addEventListener("click", function() {
-    initializeSnakeGame(10, 10);
+    initializeSnakeGame(20, 50);
 });
 
 document.getElementById("pauseGameButton").addEventListener("click", function() {
