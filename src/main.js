@@ -304,7 +304,7 @@ function spawnPieceOfFood() {
 
 //add functionality to buttons
 document.getElementById("startGameButton").addEventListener("click", function() {
-    initializeSnakeGame(40, 60);
+    initializeSnakeGame(60, 100);
 });
 
 document.getElementById("pauseGameButton").addEventListener("click", function() {
