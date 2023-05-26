@@ -7,22 +7,23 @@
 
 #snakeGameTable {
   margin-bottom: 10px; /* Adjust the margin as needed */
-  border: 4px solid #555555;
-  background-color: #111111;
+  border: 4px solid #300346;
+  background-color: #440458;
 }
 
 .snake-table td {
-  width: 1px;
-  height: 1px;
+  width: 5px;
+  height: 5px;
   padding: 2px;
+  margin: 0px;
 }
 
 .snake-cell {
-  background-color: #ff1cdd;
+  background-color: #ff795d;
 }
 
 .snake-cell-two {
-  background-color: #1916e9;
+  background-color: #0089f6;
 }
 
 .food-cell {
@@ -34,7 +35,8 @@
 }
 
 body {
-  background-image: url("https://www.morereptiles.com/wp-content/uploads/2022/09/White-Lipped-Island-Pit-Viper.png");
+  background-image: url("../imgs/bg.jpg");
+  background-size: cover;
 }
 
 #score {
@@ -51,6 +53,8 @@ body {
 }
 
 h1 {
-  color: white;
-  font-family: 'Courier New', Courier, monospace;
+  color: rgb(253, 255, 158);
+  font-family: "Arial Black", Arial, sans-serif;
+  background-color: #300346;
+  margin: 5px;
 }
