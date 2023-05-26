@@ -1,11 +1,13 @@
-class SnakeBodyCell {
+export var snakes = []
+
+export class SnakeBodyCell {
     constructor(row, column) {
       this.row = row;
       this.column = column;
     }
 }
 
-class Snake {
+export class Snake {
     static UP = 'up';
     static RIGHT = 'right';
     static DOWN = 'down';
@@ -16,17 +18,21 @@ class Snake {
         this.body = [];
         this.classStyleName = classStyleName;
         this.direction = Snake.RIGHT;
+        this.directionSetForFrame = null;
         this.isAlive = true;
-        this.directionSetForFrame;
     }
 }
 
-class Food {
-    constructor() {
-        this.classStyleName = "food-cell";
-        this.row;
-        this.column;
+export class playerSnake extends Snake {
+    constructor(id, classStyleName, keybinds) {
+        super(id, classStyleName);
+        this.keybinds = {
+            up: 'ArrowUp',
+            right: 'ArrowRight',
+            down: 'ArrowDown',
+            left: 'ArrowLeft',
+        };
     }
 }
 
-export {SnakeBodyCell, Snake, Food}
+
