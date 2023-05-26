@@ -1,7 +1,7 @@
 import { SnakeBodyCell, Snake, snakes, playerSnake } from "./tableObjects.js";
-import {Food} from "./food.js";
+import {Food, SuperFood, SUPER_FOOD_CHANCE} from "./food.js";
 
-const MAX_HUMAN_PLAYERS = 3;
+const MAX_HUMAN_PLAYERS = 4;
 const MAX_DIFFICULTY = 10;
 const MAX_AMOUNT_OF_FOOD = 10;
 const START_AMOUNT_OF_FOOD = 5;
@@ -20,7 +20,8 @@ var tableColumns;
 const playerDictionary = {
     playerOne: { id: 1, classStyleName: 'snake-cell', keybinds: { up: 'w', right: 'd', down: 's', left: 'a' } },
     playerTwo: { id: 2, classStyleName: 'snake-cell-two', keybinds: { up: 'ArrowUp', right: 'ArrowRight', down: 'ArrowDown', left: 'ArrowLeft' } },
-    playerThree: { id: 3, classStyleName: 'snake-cell', keybinds: { up: 'i', right: 'l', down: 'k', left: 'j' } }
+    playerThree: { id: 3, classStyleName: 'snake-cell', keybinds: { up: 'i', right: 'l', down: 'k', left: 'j' } },
+    playerFour: { id: 4, classStyleName: 'snake-cell-two', keybinds: { up: '5', right: '3', down: '2', left: '1' } }
 };
 
 
@@ -135,6 +136,8 @@ function placeObjectRandomlyOnTable(object) {
     object.column = randomColumn;
 }
 
+
+
 function getRandomIntegerInRange(min, max) {
     var randomNumber = Math.random();
     var randomNumberScaled = randomNumber * max + min;
@@ -193,12 +196,22 @@ function updateSnakeGame() {
         var classList = getCellClassList(currHeadRow, currHeadColumn);
         //check if food was eaten
         if(classList.contains("food-cell")) {
-            cutTail = false;
+            snakes[i].addedAmount += Food.amountOfNutrition;
             amountOfFood--;
-            increaseGameSpeed(0.1);
+            //increaseGameSpeed(0.1);
+        } else if(classList.contains("super-food-cell")) {
+            snakes[i].addedAmount += SuperFood.amountOfNutrition;
+            amountOfFood--;
+            //increaseGameSpeed(0.2);
+        }
+        //change the brightness if the snake is slithering over itself.
+        if(classList.contains(snakes[i].classStyleName)) {
+            changeCellBrightness(currHeadRow, currHeadColumn, 50);
+        } else {
+            changeCellBrightness(currHeadRow, currHeadColumn, 100);
         }
         //check if the snake should be alive
-        if(!classList.contains("empty-cell") && !classList.contains("food-cell") 
+        if(!classList.contains("empty-cell") && !classList.contains("food-cell") && !classList.contains("super-food-cell") 
             && !classList.contains(snakes[i].classStyleName)) {
             snakes[i].isAlive = false;
             continue;
@@ -209,13 +222,17 @@ function updateSnakeGame() {
         var bodyPart = new SnakeBodyCell(currHeadRow, currHeadColumn);
         snakes[i].body.unshift(bodyPart);
 
-        if(cutTail)
+        if(snakes[i].addedAmount == 0) {
             snakes[i].body.pop();
-
+        } else {
+            snakes[i].addedAmount--;
+        }
         changeSnakeCellBodyClass(snakes[i]);
     }
     removeDeadSnakes();
 }
+
+
 
 function removeDeadSnakes() {
     for(var i = 0; i < snakes.length; i++) {
@@ -279,6 +296,22 @@ function getCellClassList(row, column) {
     }
 }
 
+function changeCellBrightness(row, column, value) {
+    var rows = table.getElementsByTagName("tr");
+  
+    if (row < rows.length) {
+      var cells = rows[row].getElementsByTagName("td");
+  
+      if (column < cells.length) {
+        var cell = cells[column];
+        var currentFilter = cell.style.filter || "brightness(100%)";
+        var brightnessValue = parseInt(currentFilter.match(/\d+/)); // Extract the current brightness value
+        var newBrightness = Math.max(value, 0); // Decrease brightness by 10 (adjust the value as needed)
+        cell.style.filter = "brightness(" + newBrightness + "%)";
+      }
+    }
+  }
+
 function spawnInitialFood() {
     for(var i = 0; i < START_AMOUNT_OF_FOOD; i++) {
         spawnPieceOfFood();
@@ -286,25 +319,30 @@ function spawnInitialFood() {
 }
 
 function attemptToSpawnFood() {
-    console.log(amountOfFood);
     if(amountOfFood >= MAX_AMOUNT_OF_FOOD) return;
 
     var chanceToSpawnFood = getRandomIntegerInRange(0, 10);
     if(chanceToSpawnFood == 1) {
-        console.log("spawning Food!");
         spawnPieceOfFood();
     }
 }
 
 function spawnPieceOfFood() {
-    var pieceOfFood = new Food();
+    var pieceOfFood;
+    var chanceToSpawnSuperFood = getRandomIntegerInRange(0, SUPER_FOOD_CHANCE);
+    console.log(chanceToSpawnSuperFood);
+    if(chanceToSpawnSuperFood == 0) {
+        pieceOfFood = new SuperFood();
+    } else {
+        pieceOfFood = new Food();
+    }
     placeObjectRandomlyOnTable(pieceOfFood);
     amountOfFood++;
 }
 
 //add functionality to buttons
 document.getElementById("startGameButton").addEventListener("click", function() {
-    initializeSnakeGame(40, 60);
+    initializeSnakeGame(90, 130);
 });
 
 document.getElementById("pauseGameButton").addEventListener("click", function() {
