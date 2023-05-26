@@ -1,15 +1,16 @@
 import { SnakeBodyCell, Snake, snakes, playerSnake } from "./tableObjects.js";
-import {Food, food} from "./food.js";
+import {Food} from "./food.js";
 
 const MAX_HUMAN_PLAYERS = 3;
-const MAX_DIFFICULTY = 5;
+const MAX_DIFFICULTY = 10;
 const MAX_AMOUNT_OF_FOOD = 10;
 const START_AMOUNT_OF_FOOD = 5;
-var startingDifficulty = 3;
+var startingDifficulty = 6;
 
 var isPaused = false;
 var table = null;
 var intervalClock;
+var amountOfFood = 0;
 
 const ZERO = 0;
 
@@ -32,6 +33,7 @@ function updateSnakesDirections(event) {
 
     for (let [key, player] of Object.entries(playerDictionary)) {
         var snakeToUpdate = findSnakeWithID(player.id);
+        if(snakeToUpdate == null) continue;
         if(!isValueInDictionary(event.key, player.keybinds) && snakeToUpdate.directionSetForFrame == false) continue;
 
         if (event.key === player.keybinds.left && snakeToUpdate.direction != Snake.RIGHT)
@@ -153,6 +155,8 @@ function changeCellClass(row, column, newClass) {
 }
 
 function updateSnakeGame() {
+    attemptToSpawnFood();
+
     for(var i = 0; i < snakes.length; i++) {
         snakes[i].directionSetForFrame = false;
         var currHeadRow = snakes[i].body[0].row;
@@ -190,6 +194,7 @@ function updateSnakeGame() {
         //check if food was eaten
         if(classList.contains("food-cell")) {
             cutTail = false;
+            amountOfFood--;
             increaseGameSpeed(0.1);
         }
         //check if the snake should be alive
@@ -276,9 +281,25 @@ function getCellClassList(row, column) {
 
 function spawnInitialFood() {
     for(var i = 0; i < START_AMOUNT_OF_FOOD; i++) {
-        var pieceOfFood = new Food();
-        placeObjectRandomlyOnTable(pieceOfFood);
+        spawnPieceOfFood();
     }
+}
+
+function attemptToSpawnFood() {
+    console.log(amountOfFood);
+    if(amountOfFood >= MAX_AMOUNT_OF_FOOD) return;
+
+    var chanceToSpawnFood = getRandomIntegerInRange(0, 10);
+    if(chanceToSpawnFood == 1) {
+        console.log("spawning Food!");
+        spawnPieceOfFood();
+    }
+}
+
+function spawnPieceOfFood() {
+    var pieceOfFood = new Food();
+    placeObjectRandomlyOnTable(pieceOfFood);
+    amountOfFood++;
 }
 
 //add functionality to buttons
