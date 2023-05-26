@@ -4,11 +4,11 @@ import {Food, food} from "./food.js";
 const MAX_HUMAN_PLAYERS = 3;
 const MAX_DIFFICULTY = 5;
 const MAX_AMOUNT_OF_FOOD = 10;
+const START_AMOUNT_OF_FOOD = 5;
 var startingDifficulty = 3;
 
 var isPaused = false;
 var table = null;
-var pieceOfFood;
 var intervalClock;
 
 const ZERO = 0;
@@ -54,6 +54,7 @@ function initializeSnakeGame(rows, columns) {
 
     initializeTable(rows, columns);
     setupHumanPlayers();
+    spawnInitialFood();
     unpauseGame();
 }
 
@@ -151,28 +152,12 @@ function changeCellClass(row, column, newClass) {
     }
 }
 
-function updateFood() {
-
-}
-
 function updateSnakeGame() {
     for(var i = 0; i < snakes.length; i++) {
         snakes[i].directionSetForFrame = false;
         var currHeadRow = snakes[i].body[0].row;
         var currHeadColumn = snakes[i].body[0].column;
         var cutTail = true;
-
-        //if the food was eaten, make a new piece
-        if(pieceOfFood == null){
-            pieceOfFood = new Food();
-            placeObjectRandomlyOnTable(pieceOfFood);
-        }
-
-        if(currHeadRow == pieceOfFood.row && currHeadColumn == pieceOfFood.column){
-            pieceOfFood = null;
-            cutTail =  false;
-            increaseGameSpeed(0.1);
-        }
 
         switch (snakes[i].direction) {
             case Snake.LEFT:
@@ -202,7 +187,14 @@ function updateSnakeGame() {
         }
 
         var classList = getCellClassList(currHeadRow, currHeadColumn);
-        if(!classList.contains("empty-cell") && !classList.contains("food-cell")) {
+        //check if food was eaten
+        if(classList.contains("food-cell")) {
+            cutTail = false;
+            increaseGameSpeed(0.1);
+        }
+        //check if the snake should be alive
+        if(!classList.contains("empty-cell") && !classList.contains("food-cell") 
+            && !classList.contains(snakes[i].classStyleName)) {
             snakes[i].isAlive = false;
             continue;
         }
@@ -279,6 +271,13 @@ function getCellClassList(row, column) {
         if (column < cells.length) {
             return cells[column].classList;
         }
+    }
+}
+
+function spawnInitialFood() {
+    for(var i = 0; i < START_AMOUNT_OF_FOOD; i++) {
+        var pieceOfFood = new Food();
+        placeObjectRandomlyOnTable(pieceOfFood);
     }
 }
 
