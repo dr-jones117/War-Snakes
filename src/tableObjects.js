@@ -12,16 +12,17 @@ export class Snake {
     static RIGHT = 'right';
     static DOWN = 'down';
     static LEFT = 'left';
-
-    constructor(id, classStyleName) {
-        this.id = id;
-        this.body = [];
-        this.classStyleName = classStyleName;
-        this.direction = Snake.RIGHT;
-        this.directionSetForFrame = null;
-        this.isAlive = true;
+  
+    constructor(id, classStyleName, direction = Snake.RIGHT) {
+      this.id = id;
+      this.body = [];
+      this.classStyleName = classStyleName;
+      this.direction = direction;
+      this.directionSetForFrame = null;
+      this.isAlive = true;
+      this.addedAmount = 0;
     }
-}
+  }
 
 export class playerSnake extends Snake {
     constructor(id, classStyleName, keybinds) {

@@ -7,8 +7,8 @@
 
 #snakeGameTable {
   margin-bottom: 10px; /* Adjust the margin as needed */
-  border: 4px solid white;
-  background-color: black;
+  border: 4px solid #555555;
+  background-color: #111111;
 }
 
 .snake-table td {
@@ -27,6 +27,10 @@
 
 .food-cell {
   background-color: #f3ff48;
+}
+
+.super-food-cell {
+  background-color: #4ef824;
 }
 
 body {
