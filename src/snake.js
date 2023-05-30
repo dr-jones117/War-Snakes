@@ -33,6 +33,7 @@ export class playerSnake extends Snake {
             down: 'ArrowDown',
             left: 'ArrowLeft',
         };
+        this.hasHitItself = false;
     }
 }
 

@@ -1,7 +1,8 @@
-import { SnakeBodyCell, Snake, snakes, playerSnake } from "./snake.js";
+import { SnakeBodyCell, Snake, snakes as playerSnakes, playerSnake } from "./snake.js";
 import {Food, SuperFood, spawnInitialFood, attemptToSpawnFood, decreaseFood} from "./food.js";
 import { getRandomIntegerInRange, isValueInDictionary, 
     getCellClassList, changeCellBrightness, isEmptyCell} from "./helper.js";
+import { GameMode } from "./gamemode.js";
 
 //constant variables
 const MAX_HUMAN_PLAYERS = 4;
@@ -13,7 +14,7 @@ const ZERO = 0;
 //add more lines to this dictionary to create more players.
 const playerDictionary = {
     playerOne: { id: 1, classStyleName: 'snake-cell', keybinds: { up: 'w', right: 'd', down: 's', left: 'a' } },
-    playerTwo: { id: 2, classStyleName: 'snake-cell-two', keybinds: { up: 'ArrowUp', right: 'ArrowRight', down: 'ArrowDown', left: 'ArrowLeft' } },
+    //playerTwo: { id: 2, classStyleName: 'snake-cell-two', keybinds: { up: 'ArrowUp', right: 'ArrowRight', down: 'ArrowDown', left: 'ArrowLeft' } },
     //playerThree: { id: 3, classStyleName: 'snake-cell', keybinds: { up: 'i', right: 'l', down: 'k', left: 'j' } },
     //playerFour: { id: 4, classStyleName: 'snake-cell-two', keybinds: { up: '5', right: '3', down: '2', left: '1' } }
 };
@@ -27,6 +28,7 @@ var tableColumns;
 var intervalClock;
 var isPaused = false;
 var difficulty = 6;
+var gameMode;
 
 //event handler and function that deal with directional input for player snakes
 document.addEventListener('keydown', updateSnakesDirections);
@@ -64,14 +66,15 @@ function initializeSnakeGame(rows, columns) {
     initializeTable(rows, columns);
     setupHumanPlayers();
     spawnInitialFood();
-
+    gameMode = new GameMode(tableRows, tableColumns, playerSnakes);
+    gameMode.checkForGameWin();
     //the game starts in a paused state, unpause it to set the clock.
     unpauseGame();
 }
 
 function findSnakeWithID(id) {
-    for(var i = 0; i < snakes.length; i++) {
-        if(id == snakes[i].id) return snakes[i];
+    for(var i = 0; i < playerSnakes.length; i++) {
+        if(id == playerSnakes[i].id) return playerSnakes[i];
     }
 }
 
@@ -84,7 +87,7 @@ function setupHumanPlayers() {
         var initialBodyCell = new SnakeBodyCell();
         placeObjectRandomlyOnTable(initialBodyCell);
         humanSnake.body.push(initialBodyCell);
-        snakes.push(humanSnake);
+        playerSnakes.push(humanSnake);
         amountHumanPlayers++;
     }
 }
@@ -133,10 +136,6 @@ export function placeObjectRandomlyOnTable(object) {
     object.column = randomColumn;
 }
 
-
-
-
-
 function changeCellClass(row, column, newClass) {
     if (!table)
         return;
@@ -153,13 +152,12 @@ function changeCellClass(row, column, newClass) {
 function updateSnakeGame() {
     attemptToSpawnFood();
 
-    for(var i = 0; i < snakes.length; i++) {
-        snakes[i].directionSetForFrame = false;
-        var currHeadRow = snakes[i].body[0].row;
-        var currHeadColumn = snakes[i].body[0].column;
-        var cutTail = true;
+    for(var i = 0; i < playerSnakes.length; i++) {
+        playerSnakes[i].directionSetForFrame = false;
+        var currHeadRow = playerSnakes[i].body[0].row;
+        var currHeadColumn = playerSnakes[i].body[0].column;
 
-        switch (snakes[i].direction) {
+        switch (playerSnakes[i].direction) {
             case Snake.LEFT:
                 currHeadColumn = currHeadColumn - 1;
                 break;
@@ -189,54 +187,60 @@ function updateSnakeGame() {
         var classList = getCellClassList(currHeadRow, currHeadColumn);
         //check if food was eaten
         if(classList.contains("food-cell")) {
-            snakes[i].addedAmount += Food.amountOfNutrition;
+            playerSnakes[i].addedAmount += Food.amountOfNutrition;
             decreaseFood();
             increaseGameSpeed(0.1);
         } else if(classList.contains("super-food-cell")) {
-            snakes[i].addedAmount += SuperFood.amountOfNutrition;
+            playerSnakes[i].addedAmount += SuperFood.amountOfNutrition;
             decreaseFood();            
             increaseGameSpeed(0.2);
         }
         //change the brightness if the snake is slithering over itself.
-        if(classList.contains(snakes[i].classStyleName)) {
+        if(classList.contains(playerSnakes[i].classStyleName)) {
+            playerSnakes[i].hasHitItself = true;
             changeCellBrightness(currHeadRow, currHeadColumn, 50);
         } else {
             changeCellBrightness(currHeadRow, currHeadColumn, 100);
         }
         //check if the snake should be alive
         if(!classList.contains(EMPTY_CELL_CLASS_NAME) && !classList.contains("food-cell") && !classList.contains("super-food-cell") 
-            && !classList.contains(snakes[i].classStyleName)) {
-            snakes[i].isAlive = false;
+            && !classList.contains(playerSnakes[i].classStyleName)) {
+            playerSnakes[i].isAlive = false;
             continue;
         }
 
-        changeSnakeCellBodyClass(snakes[i], EMPTY_CELL_CLASS_NAME);
+        changeSnakeCellBodyClass(playerSnakes[i], EMPTY_CELL_CLASS_NAME);
         
         var bodyPart = new SnakeBodyCell(currHeadRow, currHeadColumn);
-        snakes[i].body.unshift(bodyPart);
+        playerSnakes[i].body.unshift(bodyPart);
 
-        if(snakes[i].addedAmount == 0) {
-            snakes[i].body.pop();
+        if(playerSnakes[i].addedAmount == 0) {
+            playerSnakes[i].body.pop();
         } else {
-            snakes[i].addedAmount--;
+            playerSnakes[i].addedAmount--;
         }
-        changeSnakeCellBodyClass(snakes[i]);
+        changeSnakeCellBodyClass(playerSnakes[i]);
     }
     removeDeadSnakes();
+
+    gameMode.checkGameConditions();
+    if(gameMode.gameHasEnded) {
+        pauseGame();
+        console.log("game has ended!");
+        gameMode.showStats();
+    }
 }
 
-
-
 function removeDeadSnakes() {
-    for(var i = 0; i < snakes.length; i++) {
-        if(snakes[i].isAlive) continue;
-        changeSnakeCellBodyClass(snakes[i], EMPTY_CELL_CLASS_NAME);
+    for(var i = 0; i < playerSnakes.length; i++) {
+        if(playerSnakes[i].isAlive) continue;
+        changeSnakeCellBodyClass(playerSnakes[i], EMPTY_CELL_CLASS_NAME);
         
-        var index = snakes.indexOf(snakes[i]);
+        var index = playerSnakes.indexOf(playerSnakes[i]);
         if (index !== -1) {
-            snakes.splice(index, 1);
+            playerSnakes.splice(index, 1);
         }
-        
+        gameMode.setPlayerSnakes(playerSnakes);
     }
 }
 
