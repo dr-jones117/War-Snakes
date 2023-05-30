@@ -26,7 +26,7 @@ var tableColumns;
 //other game variables
 var intervalClock;
 var isPaused = false;
-var difficulty = 7;
+var difficulty = 6;
 
 //event handler and function that deal with directional input for player snakes
 document.addEventListener('keydown', updateSnakesDirections);
@@ -270,7 +270,7 @@ function increaseGameSpeed(additionalDifficulty) {
 
 //add functionality to buttons
 document.getElementById("startGameButton").addEventListener("click", function() {
-    initializeSnakeGame(100, 300);
+    initializeSnakeGame(50, 120);
 });
 
 document.getElementById("pauseGameButton").addEventListener("click", function() {
